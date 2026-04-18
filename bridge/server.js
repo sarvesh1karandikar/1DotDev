@@ -10,6 +10,7 @@ import { appendMessage, recentMessages, listFacts } from "./lib/state.js";
 import { WELCOME_MESSAGE, isGreeted, markGreeted } from "./lib/welcome.js";
 import { sendText as sendWhatsApp } from "./lib/whatsapp.js";
 import { start as startScheduler } from "./lib/scheduler.js";
+import { routeMessage } from "./lib/router.js";
 import { commands, byName } from "./commands/index.js";
 
 const {
@@ -64,11 +65,7 @@ function systemPromptFor(number) {
   return `${base}\n\nFacts the user has told you to remember:\n${facts}`;
 }
 
-async function handleCommand(text, ctx) {
-  const m = text.trim().match(/^\/(\S+)\s*(.*)$/s);
-  if (!m) return null;
-  const name = m[1].toLowerCase();
-  const args = m[2] ?? "";
+async function runCommand(name, args, ctx) {
   const cmd = byName.get(name);
   if (!cmd) return `Unknown command /${name}. Try /help.`;
   if (cmd.adminOnly && !ctx.isAdmin) return `/${name} is admin-only.`;
@@ -77,6 +74,35 @@ async function handleCommand(text, ctx) {
   } catch (e) {
     console.error("command error:", name, e);
     return `Error running /${name}.`;
+  }
+}
+
+async function handleCommand(text, ctx) {
+  const m = text.trim().match(/^\/(\S+)\s*(.*)$/s);
+  if (!m) return null;
+  return runCommand(m[1].toLowerCase(), m[2] ?? "", ctx);
+}
+
+// Translate a router tool call into an existing command invocation.
+// Returns { cmdName, args, prefix } or null if the tool cannot be mapped.
+function toolToCommand(toolName, input) {
+  switch (toolName) {
+    case "remind":
+      return { cmdName: "remind", args: `${input.when} ${input.text}`.trim(), prefix: "⏱" };
+    case "todo_add":
+      return { cmdName: "todo", args: `add ${input.text}`, prefix: "✅" };
+    case "todo_list":
+      return { cmdName: "todo", args: "list", prefix: "📋" };
+    case "todo_done":
+      return { cmdName: "todo", args: `done ${input.index}`, prefix: "✅" };
+    case "reminders_list":
+      return { cmdName: "reminders", args: "", prefix: "⏰" };
+    case "time":
+      return { cmdName: "time", args: "", prefix: "🕐" };
+    case "reset":
+      return { cmdName: "reset", args: "", prefix: "🧹" };
+    default:
+      return null;
   }
 }
 
@@ -112,6 +138,25 @@ app.post("/webhook", async (req, res) => {
         console.log("cmd out:", from, reply.slice(0, 80));
       }
       return;
+    }
+
+    // Natural-language routing: ask Haiku to pick a tool or defer to chat.
+    try {
+      const decision = await routeMessage(anthropic, text);
+      if (decision.usage) logUsage(from, "claude-haiku-4-5", decision.usage);
+      if (decision.kind === "tool") {
+        const mapping = toolToCommand(decision.name, decision.input);
+        if (mapping) {
+          console.log(`routed: ${decision.name} ${JSON.stringify(decision.input)}`);
+          const out = await runCommand(mapping.cmdName, mapping.args, { from, user, isAdmin });
+          const reply = `${mapping.prefix} ${out}`;
+          await sendWhatsApp(from, reply);
+          console.log("route out:", from, reply.slice(0, 80));
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn("router failed, falling through to chat:", e.message);
     }
 
     appendMessage(from, "user", text);
