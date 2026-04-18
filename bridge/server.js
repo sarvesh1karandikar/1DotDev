@@ -4,11 +4,12 @@ await loadSecretsFromSsm();
 
 import express from "express";
 import crypto from "crypto";
-import axios from "axios";
 import { createClient, logUsage } from "./lib/anthropic.js";
 import { ensureUser } from "./lib/users.js";
 import { appendMessage, recentMessages, listFacts } from "./lib/state.js";
 import { WELCOME_MESSAGE, isGreeted, markGreeted } from "./lib/welcome.js";
+import { sendText as sendWhatsApp } from "./lib/whatsapp.js";
+import { start as startScheduler } from "./lib/scheduler.js";
 import { commands, byName } from "./commands/index.js";
 
 const {
@@ -54,14 +55,6 @@ function validSignature(req) {
   const provided = header.slice("sha256=".length);
   if (provided.length !== expected.length) return false;
   return crypto.timingSafeEqual(Buffer.from(provided, "hex"), Buffer.from(expected, "hex"));
-}
-
-async function sendWhatsApp(to, text) {
-  await axios.post(
-    `https://graph.facebook.com/v21.0/${META_WA_PHONE_NUMBER_ID}/messages`,
-    { messaging_product: "whatsapp", to, type: "text", text: { body: text } },
-    { headers: { Authorization: `Bearer ${META_WA_TOKEN}`, "Content-Type": "application/json" } }
-  );
 }
 
 function systemPromptFor(number) {
@@ -144,4 +137,7 @@ app.post("/webhook", async (req, res) => {
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
-app.listen(PORT, () => console.log(`bridge listening on :${PORT}`));
+app.listen(PORT, () => {
+  console.log(`bridge listening on :${PORT}`);
+  startScheduler();
+});
