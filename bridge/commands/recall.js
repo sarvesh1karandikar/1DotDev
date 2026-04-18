@@ -2,7 +2,10 @@ import { searchEntries } from "../lib/state.js";
 export default {
   name: "recall",
   adminOnly: false,
-  description: "Search across notes, journal, entries: /recall <query>",
+  hidden: true,
+  category: "journal",
+  description: "Search notes, journal, entries",
+  usage: "/recall <query>",
   async run({ from, args }) {
     const q = args.trim();
     if (!q) return "Usage: /recall <query>";

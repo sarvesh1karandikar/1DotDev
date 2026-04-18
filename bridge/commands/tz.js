@@ -3,7 +3,11 @@ import { isValidTz, localTime } from "../lib/tz.js";
 export default {
   name: "tz",
   adminOnly: false,
-  description: "Set my timezone, e.g. /tz America/New_York",
+  hidden: true,
+  category: "settings",
+  description: "Set my timezone",
+  usage: "/tz <IANA-zone>",
+  examples: ["/tz America/New_York", "/tz Asia/Kolkata"],
   async run({ from, user, args }) {
     const zone = args.trim();
     if (!zone) return `Your timezone is ${user.tz}. To change: /tz America/New_York`;

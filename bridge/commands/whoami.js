@@ -4,7 +4,10 @@ import { aliasFor } from "../lib/models.js";
 export default {
   name: "whoami",
   adminOnly: false,
+  hidden: true,
+  category: "stats",
   description: "Show my profile: number, timezone, model, stats",
+  usage: "/whoami",
   async run({ from, user, isAdmin }) {
     const msgs = messageCount(from);
     const factsN = listFacts(from).length;

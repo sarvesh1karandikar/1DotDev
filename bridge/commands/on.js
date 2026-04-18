@@ -2,7 +2,10 @@ import { entriesOn } from "../lib/state.js";
 export default {
   name: "on",
   adminOnly: false,
-  description: "Show notes, journal, entries on a date: /on YYYY-MM-DD",
+  hidden: true,
+  category: "journal",
+  description: "Show everything logged on a date",
+  usage: "/on YYYY-MM-DD",
   async run({ from, args }) {
     const d = args.trim();
     if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return "Usage: /on YYYY-MM-DD";

@@ -8,6 +8,7 @@
     "@aws-sdk/client-ssm": "^3.600.0",
     "axios": "^1.7.0",
     "better-sqlite3": "^12.9.0",
+    "chrono-node": "^2.7.0",
     "dotenv": "^16.4.0",
     "express": "^4.19.0"
   }

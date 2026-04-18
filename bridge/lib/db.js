@@ -47,6 +47,29 @@ CREATE TABLE IF NOT EXISTS entries (
 );
 CREATE INDEX IF NOT EXISTS idx_entries_number_date ON entries(number, local_date);
 CREATE INDEX IF NOT EXISTS idx_entries_number_kind ON entries(number, kind, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS reminders (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  number TEXT NOT NULL,
+  text TEXT NOT NULL,
+  due_at INTEGER NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending',
+  sent_at INTEGER,
+  error TEXT,
+  created_at INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_reminders_status_due ON reminders(status, due_at);
+CREATE INDEX IF NOT EXISTS idx_reminders_number ON reminders(number, due_at);
+
+CREATE TABLE IF NOT EXISTS todos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  number TEXT NOT NULL,
+  text TEXT NOT NULL,
+  done INTEGER NOT NULL DEFAULT 0,
+  created_at INTEGER NOT NULL,
+  completed_at INTEGER
+);
+CREATE INDEX IF NOT EXISTS idx_todos_number_done ON todos(number, done, id);
 `);
 
 export default db;

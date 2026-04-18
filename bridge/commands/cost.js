@@ -33,7 +33,10 @@ function sumTotals(rows) {
 export default {
   name: "cost",
   adminOnly: false,
+  hidden: true,
+  category: "stats",
   description: "Show Anthropic token spend (admins see all users)",
+  usage: "/cost",
   async run({ from, user, isAdmin }) {
     const now = new Date();
     const startToday = startOfLocalDay(user.tz, now);

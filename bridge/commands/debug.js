@@ -2,7 +2,9 @@ import db from "../lib/db.js";
 export default {
   name: "debug",
   adminOnly: true,
-  description: "Bot uptime, model, counts (admin only)",
+  category: "stats",
+  description: "Bot uptime, model, counts",
+  usage: "/debug",
   async run() {
     const uptimeS = Math.round(process.uptime());
     const h = Math.floor(uptimeS / 3600), m = Math.floor((uptimeS % 3600) / 60), s = uptimeS % 60;

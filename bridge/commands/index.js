@@ -15,13 +15,28 @@ import journal from "./journal.js";
 import entry from "./entry.js";
 import on from "./on.js";
 import recall from "./recall.js";
+import remind from "./remind.js";
+import reminders from "./reminders.js";
+import todo from "./todo.js";
+import admin from "./admin.js";
 
 export const commands = [
-  help, reset, cost, whoami, debug,
-  time, tz, model,
+  // user-facing core
+  help, reset,
+  // reminders + todos
+  remind, reminders, todo,
+  // time
+  time,
+  // stats + settings
+  cost, whoami, debug, tz, model,
+  // memory
   remember, facts, forget,
+  // notes
   note, notes,
+  // journal
   journal, entry, on, recall,
+  // admin
+  admin,
 ];
 
 export const byName = new Map(commands.map(c => [c.name, c]));

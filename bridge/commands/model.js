@@ -4,7 +4,11 @@ import { MODELS, TIER_WARNINGS, resolveModel, aliasFor } from "../lib/models.js"
 export default {
   name: "model",
   adminOnly: false,
-  description: "Show or switch Claude model: /model haiku | sonnet | opus",
+  hidden: true,
+  category: "settings",
+  description: "Show or switch Claude model",
+  usage: "/model [haiku|sonnet|opus]",
+  examples: ["/model", "/model sonnet"],
   async run({ from, user, args }) {
     const a = args.trim().toLowerCase();
     if (!a) {

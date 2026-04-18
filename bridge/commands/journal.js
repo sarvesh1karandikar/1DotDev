@@ -3,7 +3,15 @@ import { localDate } from "../lib/tz.js";
 export default {
   name: "journal",
   adminOnly: false,
-  description: "Log a reflection, or /journal today, or /journal on YYYY-MM-DD",
+  hidden: true,
+  category: "journal",
+  description: "Log a reflection entry",
+  usage: "/journal <text> | /journal today | /journal on YYYY-MM-DD",
+  examples: [
+    "/journal had a great run today",
+    "/journal today",
+    "/journal on 2026-04-14",
+  ],
   async run({ from, user, args }) {
     const a = args.trim();
     if (a === "today") {

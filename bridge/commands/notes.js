@@ -2,7 +2,10 @@ import { recentEntries, searchEntries } from "../lib/state.js";
 export default {
   name: "notes",
   adminOnly: false,
-  description: "List recent notes, or /notes search <query>",
+  hidden: true,
+  category: "notes",
+  description: "List recent notes, or search them",
+  usage: "/notes | /notes search <query>",
   async run({ from, args }) {
     const a = args.trim();
     if (a.startsWith("search ")) {

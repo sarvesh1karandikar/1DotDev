@@ -5,15 +5,11 @@ export const WELCOME_MESSAGE = `Hi! 👋 I am *1DotDev*, a personal WhatsApp bot
 You are one of a handful of people with access to me. Here is what I can do:
 
 💬 *Chat* — just message me anything, like ChatGPT
-🧠 *Remember things about you* — /remember I am vegetarian
-📓 *Journal* — /journal had a great day today
-🗒️ *Notes* — /note pick up milk, then /notes to see them
-📅 *Log past events* — /entry 2026-04-14 went running
-🔍 *Search* — /recall broken AC
-🌍 *Timezone helper* — /time
-💰 *See usage* — /cost
+📅 *Set reminders* — /remind tomorrow 3pm call mom
+✅ *Track todos* — /todo add buy groceries
+🕐 *Time across regions* — /time
 
-Type */help* for the full list.
+Type */help* for all commands.
 
 Ready when you are.`;
 

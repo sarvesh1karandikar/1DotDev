@@ -81,3 +81,72 @@ export function costByUser(sinceMs) {
     "SELECT number, COALESCE(SUM(cost_usd), 0) AS total, COALESCE(SUM(input_tokens), 0) AS input, COALESCE(SUM(output_tokens), 0) AS output FROM usage WHERE created_at >= ? GROUP BY number ORDER BY total DESC"
   ).all(sinceMs);
 }
+
+// --- Reminders ---
+
+export function addReminder(number, text, dueAt) {
+  return db.prepare(
+    "INSERT INTO reminders (number, text, due_at, status, created_at) VALUES (?, ?, ?, 'pending', ?)"
+  ).run(number, text, dueAt, Date.now()).lastInsertRowid;
+}
+
+export function pendingReminders(number) {
+  return db.prepare(
+    "SELECT id, text, due_at FROM reminders WHERE number = ? AND status = 'pending' ORDER BY due_at"
+  ).all(number);
+}
+
+export function dueReminders(nowMs) {
+  return db.prepare(
+    "SELECT id, number, text, due_at FROM reminders WHERE status = 'pending' AND due_at <= ? ORDER BY due_at"
+  ).all(nowMs);
+}
+
+export function markReminderSent(id, sentAt = Date.now()) {
+  db.prepare("UPDATE reminders SET status = 'sent', sent_at = ? WHERE id = ?").run(sentAt, id);
+}
+
+export function markReminderFailed(id, error) {
+  db.prepare("UPDATE reminders SET status = 'failed', error = ? WHERE id = ?").run(error, id);
+}
+
+export function cancelReminder(number, index) {
+  const rows = pendingReminders(number);
+  const target = rows[index - 1];
+  if (!target) return null;
+  db.prepare("UPDATE reminders SET status = 'cancelled' WHERE id = ?").run(target.id);
+  return target;
+}
+
+export function reminderStats() {
+  return db.prepare(
+    "SELECT status, COUNT(*) AS n FROM reminders GROUP BY status"
+  ).all();
+}
+
+// --- Todos ---
+
+export function addTodo(number, text) {
+  return db.prepare(
+    "INSERT INTO todos (number, text, done, created_at) VALUES (?, ?, 0, ?)"
+  ).run(number, text, Date.now()).lastInsertRowid;
+}
+
+export function listTodos(number, includeDone = false) {
+  const sql = includeDone
+    ? "SELECT id, text, done, created_at, completed_at FROM todos WHERE number = ? ORDER BY done, id"
+    : "SELECT id, text, done, created_at FROM todos WHERE number = ? AND done = 0 ORDER BY id";
+  return db.prepare(sql).all(number);
+}
+
+export function markTodoDone(number, index) {
+  const rows = listTodos(number);
+  const target = rows[index - 1];
+  if (!target) return null;
+  db.prepare("UPDATE todos SET done = 1, completed_at = ? WHERE id = ?").run(Date.now(), target.id);
+  return target;
+}
+
+export function clearTodos(number) {
+  return db.prepare("DELETE FROM todos WHERE number = ?").run(number).changes;
+}

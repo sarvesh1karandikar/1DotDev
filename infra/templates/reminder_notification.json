@@ -1,0 +1,14 @@
+{
+  "name": "reminder_notification",
+  "category": "UTILITY",
+  "language": "en",
+  "components": [
+    {
+      "type": "BODY",
+      "text": "Reminder: {{1}}",
+      "example": {
+        "body_text": [["take your medication"]]
+      }
+    }
+  ]
+}
