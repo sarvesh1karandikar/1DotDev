@@ -101,6 +101,14 @@ function toolToCommand(toolName, input) {
       return { cmdName: "time", args: "", prefix: "🕐" };
     case "reset":
       return { cmdName: "reset", args: "", prefix: "🧹" };
+    case "digest_add":
+      return { cmdName: "digest", args: `add ${input.topic}`, prefix: "📰" };
+    case "digest_remove":
+      return { cmdName: "digest", args: `remove ${input.index}`, prefix: "📰" };
+    case "digest_now":
+      return { cmdName: "digest", args: "now", prefix: "📰" };
+    case "digest_status":
+      return { cmdName: "digest", args: "", prefix: "📰" };
     default:
       return null;
   }

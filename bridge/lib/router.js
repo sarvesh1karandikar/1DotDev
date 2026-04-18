@@ -57,6 +57,40 @@ const TOOLS = [
     input_schema: { type: "object", properties: {} },
   },
   {
+    name: "digest_add",
+    description:
+      "Add a topic to the user's daily news digest. Use when the user asks to add, subscribe, or include a news topic.",
+    input_schema: {
+      type: "object",
+      properties: {
+        topic: {
+          type: "string",
+          description: "The topic to track, as free text (e.g. 'H1B visa news', 'AI', 'NVDA stock').",
+        },
+      },
+      required: ["topic"],
+    },
+  },
+  {
+    name: "digest_remove",
+    description: "Remove a topic from the user's digest by its list number (from /digest topics).",
+    input_schema: {
+      type: "object",
+      properties: { index: { type: "integer", minimum: 1 } },
+      required: ["index"],
+    },
+  },
+  {
+    name: "digest_now",
+    description: "Run the user's daily digest immediately, regardless of schedule.",
+    input_schema: { type: "object", properties: {} },
+  },
+  {
+    name: "digest_status",
+    description: "Show the user's digest settings (topics, time, on/off).",
+    input_schema: { type: "object", properties: {} },
+  },
+  {
     name: "reset",
     description: "Clear the chat history. Use ONLY on an explicit request like 'clear my history' or 'reset our chat'.",
     input_schema: { type: "object", properties: {} },
