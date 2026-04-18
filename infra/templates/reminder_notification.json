@@ -5,7 +5,7 @@
   "components": [
     {
       "type": "BODY",
-      "text": "Reminder: {{1}}",
+      "text": "Hi! This is a scheduled reminder you set earlier: {{1}}\n\nReply to this message to continue chatting.",
       "example": {
         "body_text": [["take your medication"]]
       }
