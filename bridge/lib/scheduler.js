@@ -2,6 +2,7 @@ import cron from "node-cron";
 import db from "./db.js";
 import { dueReminders, markReminderSent, markReminderFailed } from "./state.js";
 import { sendText, sendTemplate } from "./whatsapp.js";
+import { allEnabledSubscriptions, isDue, sendDigestFor } from "./digest.js";
 
 const WINDOW_MS = 24 * 60 * 60 * 1000;
 const TEMPLATE_NAME = "reminder_notification";
@@ -36,10 +37,20 @@ export async function fireReminder(rem) {
 export async function tick() {
   const now = Date.now();
   const due = dueReminders(now);
-  if (due.length === 0) return;
-  console.log(`scheduler: ${due.length} reminder(s) due`);
-  for (const rem of due) {
-    await fireReminder(rem);
+  if (due.length > 0) {
+    console.log(`scheduler: ${due.length} reminder(s) due`);
+    for (const rem of due) {
+      await fireReminder(rem);
+    }
+  }
+
+  const subs = allEnabledSubscriptions();
+  const dueSubs = subs.filter(s => s.topics.length > 0 && isDue(s, new Date(now)));
+  if (dueSubs.length > 0) {
+    console.log(`scheduler: ${dueSubs.length} digest(s) due`);
+    for (const sub of dueSubs) {
+      await sendDigestFor(sub);
+    }
   }
 }
 

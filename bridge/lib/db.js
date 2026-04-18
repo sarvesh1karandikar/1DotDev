@@ -70,6 +70,16 @@ CREATE TABLE IF NOT EXISTS todos (
   completed_at INTEGER
 );
 CREATE INDEX IF NOT EXISTS idx_todos_number_done ON todos(number, done, id);
+
+CREATE TABLE IF NOT EXISTS digest_subscriptions (
+  number TEXT PRIMARY KEY,
+  hour INTEGER NOT NULL DEFAULT 7,
+  minute INTEGER NOT NULL DEFAULT 30,
+  topics TEXT NOT NULL DEFAULT '[]',
+  enabled INTEGER NOT NULL DEFAULT 1,
+  last_sent_at INTEGER,
+  created_at INTEGER NOT NULL
+);
 `);
 
 export default db;

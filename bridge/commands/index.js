@@ -18,13 +18,14 @@ import recall from "./recall.js";
 import remind from "./remind.js";
 import reminders from "./reminders.js";
 import todo from "./todo.js";
+import digest from "./digest.js";
 import admin from "./admin.js";
 
 export const commands = [
   // user-facing core
   help, reset,
-  // reminders + todos
-  remind, reminders, todo,
+  // reminders + todos + digest
+  remind, reminders, todo, digest,
   // time
   time,
   // stats + settings

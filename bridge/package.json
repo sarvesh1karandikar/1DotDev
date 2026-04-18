@@ -10,6 +10,7 @@
     "better-sqlite3": "^12.9.0",
     "chrono-node": "^2.7.0",
     "dotenv": "^16.4.0",
+    "fast-xml-parser": "^4.5.0",
     "node-cron": "^3.0.3",
     "express": "^4.19.0"
   }
