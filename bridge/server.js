@@ -1,4 +1,7 @@
 import "dotenv/config";
+import { loadSecretsFromSsm } from "./lib/secrets.js";
+await loadSecretsFromSsm();
+
 import express from "express";
 import crypto from "crypto";
 import axios from "axios";
